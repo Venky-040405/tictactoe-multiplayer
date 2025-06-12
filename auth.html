@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, cyan, #ACB6E5);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            text-align: center;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .auth-container input {
+            width: 100%;
+            padding: 12px 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 12px;
+            background: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .auth-container button:hover {
+            background: #3b5dc4;
+        }
+
+        .auth-container .link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .auth-container .link a {
+            color: #4e73df;
+            text-decoration: none;
+        }
+
+        .auth-container .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-container">
+        <h2>Login</h2>
+        <form>
+            <input id="email" type="email" placeholder="Email" required>
+            <input id="password" type="password" placeholder="Password" required>
+            <button id="signin" type="submit">Sign in</a></button>
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js"></script>
+    <script type="module">
+        const button = document.getElementById("signin");
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getDatabase, set, ref, update, onValue, get } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-79xegBgcFgdVLNbZRQRuozdR3j0hwrA",
+            authDomain: "tic-tik-tae.firebaseapp.com",
+            projectId: "tic-tik-tae",
+            storageBucket: "tic-tik-tae.firebasestorage.app",
+            messagingSenderId: "376258770437",
+            appId: "1:376258770437:web:92a13cd3c4796836f94e6c",
+            measurementId: "G-QN6SKE494D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const database = getDatabase();
+
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+
+
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    set(ref(database, 'users/' + user.uid), {
+                        email: email,
+                        password: password,
+                    })
+                        .then(() => {
+                            alert("user successfully");
+                            window.location.href = "room.html";
+                        })
+                        .catch((error) => {
+                            alert(error);
+                        });
+
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+                });
+
+
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    get(ref(database, 'users/' + user.uid))
+                        .then((snapshot) => {
+                            if (snapshot.exists()) {
+                                alert("already user successfully");
+                                window.location.href = "room.html";
+                            }
+                        })
+                        .catch((error) => {
+                            alert(error);
+                        });
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                });
+        });
+    </script>
+
+</body>
+
+</html>
