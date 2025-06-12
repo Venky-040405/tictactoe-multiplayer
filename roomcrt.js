@@ -34,7 +34,7 @@ document.getElementById("create").addEventListener("click", () => {
             const roomData = snapshot.val();
             if (roomData && roomData.player2 === "o") {
                 roomstatus.innerText = "Player 2 joined!";
-                window.location.href = `index.html?player=${playerx}&roomid=${roomid}`;
+                window.location.href = `game.html?player=${playerx}&roomid=${roomid}`;
 
             }
         })
@@ -59,7 +59,7 @@ document.getElementById("joined").addEventListener("click", () => {
                 update(ref(db, 'rooms/' + roomids), {
                     player2: `${playero}`,
                 })
-                window.location.href = `index.html?player=${playero}&roomid=${roomids}`;
+                window.location.href = `game.html?player=${playero}&roomid=${roomids}`;
                 roomstatus.innerText = 'roomid joined sucessfully';
 
             }
